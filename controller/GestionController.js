@@ -8,6 +8,16 @@ ruta.get('/', function(req, res) {
     res.json({ mensaje: '¡Index de Gestion de orden!' })  
   })
 
+  ruta.get('/customers/', function(req, res) {
+    let sql="select customers.customerName from customers"
+    conexion.query(sql,(err,rows)=>{
+        if(err) throw err;
+        else{
+            res.json(rows)
+        }
+    })
+  })   
+
   ruta.get('/orders/', function(req, res) {
   
   let sql="select * from orders order by orderNumber"
