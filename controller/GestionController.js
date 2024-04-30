@@ -8,19 +8,9 @@ ruta.get('/', function(req, res) {
     res.json({ mensaje: '¡Index de Gestion de orden!' })  
   })
 
-  ruta.get('/customers/', function(req, res) {
-    let sql="select customers.customerName from customers"
-    conexion.query(sql,(err,rows)=>{
-        if(err) throw err;
-        else{
-            res.json(rows)
-        }
-    })
-  })   
-
   ruta.get('/orders/', function(req, res) {
   
-  let sql="select * from orders order by orderNumber"
+  let sql="SELECT * FROM orders;"
   conexion.query(sql,(err,rows)=>{
       if(err) throw err;
       else{
@@ -29,9 +19,8 @@ ruta.get('/', function(req, res) {
   })
   })
 
-
-ruta.get('/orders/:orderNumber', function(req, res) {
-    conexion.query("select * from orders where orderNumber = ?", [req.params.orderNumber],(err,rows)=>{
+  ruta.get('/orders/:orderNumber', function(req, res) {
+    conexion.query("SELECT * from orders where orderNumber = ?", [req.params.orderNumber],(err,rows)=>{
         if(err) throw err;
         if(rows.length === 0) res.json({codigo:'-1',mensaje: 'La orden solicitada no existe'})
         else{
@@ -40,8 +29,31 @@ ruta.get('/orders/:orderNumber', function(req, res) {
     })
   })
 
-  ruta.post('/orders/:orderNumber', function(req, res) {
-    conexion.query("SELECT orders.orderNumber, orders.orderDate, customers.customerName,  CONCAT(COALESCE(customers.addressLine1, ''), CASE WHEN customers.addressLine1 IS NOT NULL AND customers.addressLine2 IS NOT NULL THEN ' + ' ELSE '' END, COALESCE(customers.addressLine2, '')) as Direcciones, customers.phone FROM `orders` JOIN customers on orders.customerNumber = customers.customerNumber WHERE orders.orderNumber = ?", [req.params.orderNumber],(err,rows)=>{
+  ruta.get('/customers/', function(req, res) {
+  
+    let sql="SELECT DISTINCT c.customerNumber,c.customerName, c.contactLastName,c.contactFirstName,c.phone, c.addressLine1, c.addressLine2, c.city, c.state, c.postalCode, c.country, c.salesRepEmployeeNumber, c.creditLimit, c.salesRepEmployeeNumber, o.orderNumber, o.orderDate FROM customers c JOIN orders o WHERE c.customerNumber = o.customerNumber;"
+    conexion.query(sql,(err,rows)=>{
+        if(err) throw err;
+        else{
+            res.json(rows)
+        }
+    })
+    })
+
+    ruta.get('/customers/:customerNumber', function(req, res) {
+  
+        let sql="SELECT * FROM customers;"
+        conexion.query("SELECT  DISTINCT c.customerNumber,c.customerName, c.contactLastName,c.contactFirstName,c.phone, c.addressLine1, c.addressLine2, c.city, c.state, c.postalCode, c.country, c.salesRepEmployeeNumber, c.creditLimit, o.orderNumber, o.orderDate  FROM customers c JOIN orders o WHERE c.customerNumber = o.customerNumber AND c.customerNumber =?", [req.params.customerNumber],(err,rows)=>{
+            if(err) throw err;
+            else{
+                res.json(rows)
+            }
+        })
+        })
+
+
+ruta.get('/ordersCustomers/:customerNumber', function(req, res) {
+    conexion.query("SELECT orders.orderNumber, orders.customerNumber FROM orders where customerNumber = ?", [req.params.customerNumber],(err,rows)=>{
         if(err) throw err;
         if(rows.length === 0) res.json({codigo:'-1',mensaje: 'La orden solicitada no existe'})
         else{
@@ -49,4 +61,46 @@ ruta.get('/orders/:orderNumber', function(req, res) {
         }
     })
   })
+
+  ruta.get('/employes/', function(req, res) {
+  
+    let sql="SELECT c.customerNumber, c.salesRepEmployeeNumber, e.lastName, e.firstName, e.email FROM customers c JOIN employees e ON c.salesRepEmployeeNumber = e.employeeNumber"
+    conexion.query(sql,(err,rows)=>{
+        if(err) throw err;
+        else{
+            res.json(rows)
+        }
+    })
+    })
+
+    ruta.get('/employes/:salesRepEmployeeNumber', function(req, res) {
+        conexion.query("SELECT c.customerNumber, c.salesRepEmployeeNumber, e.lastName, e.firstName, e.email FROM customers c JOIN employees e ON c.salesRepEmployeeNumber = e.employeeNumber where salesRepEmployeeNumber = ?", [req.params.salesRepEmployeeNumber],(err,rows)=>{
+            if(err) throw err;
+            if(rows.length === 0) res.json({codigo:'-1',mensaje: 'La orden solicitada no existe'})
+            else{
+                res.json(rows)
+            }
+        })
+      })
+
+      ruta.get('/orderDetails/', function(req, res) {
+  
+        let sql="SELECT * FROM orderdetails"
+        conexion.query(sql,(err,rows)=>{
+            if(err) throw err;
+            else{
+                res.json(rows)
+            }
+        })
+        })
+
+        ruta.get('/orderDetails/:orderNumber', function(req, res) {
+            conexion.query("SELECT * FROM orderdetails where orderNumber = ?", [req.params.orderNumber],(err,rows)=>{
+                if(err) throw err;
+                if(rows.length === 0) res.json({codigo:'-1',mensaje: 'La orden solicitada no existe'})
+                else{
+                    res.json(rows)
+                }
+            })
+          })
   module.exports = ruta;
