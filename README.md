@@ -1,6 +1,5 @@
 # 1. Description
 
-## Description
 The Order Management API is a simple yet effective tool designed to facilitate the retrieval of data related to orders, customers, employees and order details. This API is ideal for educational purposes and practical exercises as it provides endpoints to query and retrieve data from a structured database. Leveraging Node.js and Express for request handling and MySQL for database interactions, this API offers a simple approach to accessing essential business data.
 
 ### Endpoints Overview
