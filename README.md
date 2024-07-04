@@ -1,5 +1,7 @@
 # 1. Description
-This project is an API designed to manage a specific data network database. It uses Node.js and Express to handle the requests and MySQL to interact with the database.
+
+## Description
+The Order Management API is designed to manage a complex network of data related to products, customers, orders, and employees. This API provides endpoints to perform CRUD operations on various entities such as product lines, products, offices, employees, customers, payments, orders, and order details. It uses Node.js and Express to handle the requests and MySQL to interact with the database.
 
 # 2. Installation 
 Installation
